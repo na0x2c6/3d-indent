@@ -8,7 +8,7 @@ width = 20 # 改行幅
 
 def make3Dindent(stream, reverse=False):
   depth = 0 # いまの浮かび具合（右側のテキストに適用）
-  depthList = [] # 行ごとの浮かび具合の管理
+  depthList = [0] # 行ごとの浮かび具合の管理
   leftLines = []
   rightLines = []
   for line in stream: 
@@ -27,7 +27,7 @@ def make3Dindent(stream, reverse=False):
         depth -= 1
         left += c + ' '
         right += c
-      elif charcount >= width or c == "\n": # 改行処理
+      elif c == "\n": # 改行処理
         pad = (width - charcount) * ' '
         leftLines.append(left + pad)
         rightLines.append(right + pad)
@@ -40,10 +40,21 @@ def make3Dindent(stream, reverse=False):
         left += c
         right += c
 
-  if charcount > 0:
-    leftLines.append(left)
-    rightLines.append(right)
+      if charcount >= width:
+        leftLines.append(left)
+        rightLines.append(right)
+        depthList.append(depth)
+        left = ''
+        right = ''
+        charcount = 0
+
+  if c != "\n" and charcount > 0:
+    pad = (width - charcount) * ' '
+    leftLines.append(left + pad)
+    rightLines.append(right + pad)
     depthList.append(depth)
+
+  depthList.pop()
 
   maxDepth = max(depthList)
 
