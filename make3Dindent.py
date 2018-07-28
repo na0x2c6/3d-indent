@@ -57,16 +57,18 @@ def make3Dindent(stream, reverse=False):
   depthList.pop()
 
   maxDepth = max(depthList)
+  maxLength = max([len(line) for line in leftLines])
 
   retRight = []
   retLeft = []
 
+  baseWidth = maxDepth + maxLength
   for (l, r, d) in zip(leftLines, rightLines, depthList):
-    retLeft.append((' ' * (maxDepth - d)) + l)
-    retRight.append((' ' * d) + r)
+    retLeft.append((' ' * (maxDepth - d)) + l + (' ' * (baseWidth - (len(l) + (maxDepth - d)))))
+    retRight.append((' ' * d) + r + (' ' * (baseWidth - (len(r) + d))))
 
   # 焦点補助のドット
-  pad = ' ' * int(width / 2)
+  pad = ' ' * int(baseWidth / 2)
   dotLine = pad + '●' + pad
   retLeft.append(dotLine)
   retRight.append(dotLine)
@@ -81,7 +83,7 @@ def make3Dindent(stream, reverse=False):
 # 出力用
 def printLeftRight(left, right):
   for (l, r) in zip(left, right):
-    print (l + '    ' + r)
+    print (l + ' ' + r)
 
 
 if __name__ == '__main__':
